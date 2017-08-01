@@ -65,6 +65,7 @@ get '/logout' do
 end
 
 get '/posts/new' do
+    @post = Post.new
     erb(:"posts/new")
 end
 
@@ -72,13 +73,17 @@ post '/posts' do
     photo_url = params[:photo_url]
     
     #instantiate new Post
-    @post = Post.new({photo_url: photo_url})
+    @post = Post.new({photo_url: photo_url, user_id: current_user.id})
     
     #if @post validates, save
     if @post.save
         redirect(to('/'))
     else
-        #if it doesn't validate, print error messages
-        @post.error.full_messages.inspect
+        erb(:"posts/new")
     end
+end
+
+get '/posts/:id' do
+    @post = Post.find(params[:id])
+    erb(:"posts/show")
 end
